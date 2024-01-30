@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+name = "oauthms"
+dependencies = [
+  "pyxdg",
+  "msal",
+  "python-gnupg>=0.4.6"
+]
+authors = [
+  {name = "Harish Krupo"}
+]
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/harishkrupo/oauth2ms"
+Issues = "https://github.com/harishkrupo/oauth2ms/issues"
+
+[project.scripts]
+oauth2ms = "oauth2ms:main"
