@@ -160,7 +160,7 @@ def fetch_token_from_cache(app):
     else:
         None
 
-def build_app_state_from_credentials(crypt):
+def build_app_state_from_credentials(crypt, credentials_file):
     # If the file is missing return None
     if not os.path.exists(credentials_file):
         return None
@@ -245,7 +245,6 @@ def main():
             }
 
         token = None
-        app_state = build_app_state_from_credentials(crypt)
         if app_state is None:
             app_state, token = build_new_app_state(crypt)
 
@@ -273,6 +272,7 @@ def main():
                 fingerprint = crypt["fingerprint"]
                 config_json = str(gpg.encrypt(config_json, fingerprint))
                 open(credentials_file, "w").write(config_json)
+    app_state = build_app_state_from_credentials(crypt, credentials_file)
 
 if __name__ == '__main__':
     sys.exit(main())
