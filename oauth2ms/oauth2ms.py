@@ -238,41 +238,41 @@ def main():
     if cmdline_args.encrypt_using_fingerprint:
         if cmdline_args.gpg_home:
             gpg_args = {"gnupghome": cmdline_args.gpg_home}
-            gpg = gnupg.GPG(**gpg_args)
-            crypt = {
-                "gpg" : gpg,
-                "fingerprint": cmdline_args.encrypt_using_fingerprint
-            }
+        gpg = gnupg.GPG(**gpg_args)
+        crypt = {
+            "gpg" : gpg,
+            "fingerprint": cmdline_args.encrypt_using_fingerprint
+        }
 
-        token = None
-        if app_state is None:
-            app_state, token = build_new_app_state(crypt)
-
-        if app_state is None:
-            print("Something went wrong!")
-            sys.exit(1)
-
-        if token is None:
-            token = fetch_token_from_cache(app_state)
-
-        if token is not None:
-            if cmdline_args.encode_xoauth2:
-                print(encode_xoauth2(app_state, token))
-            else:
-                print(token);
-
-                cache = app_state['cache']
-        if cache.has_state_changed:
-            config = app_state["config"]
-            config["token_cache"] = cache.serialize()
-            config_json = json.dumps(config)
-            crypt = app_state.get("crypt")
-            if crypt:
-                gpg = crypt["gpg"]
-                fingerprint = crypt["fingerprint"]
-                config_json = str(gpg.encrypt(config_json, fingerprint))
-                open(credentials_file, "w").write(config_json)
+    token = None
     app_state = build_app_state_from_credentials(crypt, credentials_file)
+    if app_state is None:
+        app_state, token = build_new_app_state(crypt)
+
+    if app_state is None:
+        print("Something went wrong!")
+        sys.exit(1)
+
+    if token is None:
+        token = fetch_token_from_cache(app_state)
+
+    if token is not None:
+        if cmdline_args.encode_xoauth2:
+            print(encode_xoauth2(app_state, token))
+        else:
+            print(token);
+
+            cache = app_state['cache']
+    if cache.has_state_changed:
+        config = app_state["config"]
+        config["token_cache"] = cache.serialize()
+        config_json = json.dumps(config)
+        crypt = app_state.get("crypt")
+        if crypt:
+            gpg = crypt["gpg"]
+            fingerprint = crypt["fingerprint"]
+            config_json = str(gpg.encrypt(config_json, fingerprint))
+            open(credentials_file, "w").write(config_json)
 
 if __name__ == '__main__':
     sys.exit(main())
